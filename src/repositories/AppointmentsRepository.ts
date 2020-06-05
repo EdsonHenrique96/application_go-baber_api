@@ -20,12 +20,12 @@ class AppointmentsRepository {
     return findAppointment || null;
   }
 
-  public create(provider: string, date: Date): Appointment | null {
+  public create(provider: string, date: Date): Appointment {
     const appointment = new Appointment(provider, date);
 
     this.appointments.push(appointment);
 
-    return appointment || null;
+    return appointment;
   }
 }
 
