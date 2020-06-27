@@ -1,5 +1,9 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
+/**
+ * Entity é a representaçaõ (abstração) da tabela no banco de dados.
+ */
+
 @Entity('appointments')
 class Appointment {
   @PrimaryGeneratedColumn('uuid')

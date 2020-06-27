@@ -27,7 +27,8 @@ class CreateAppointmentService {
 
     /**
      * Não é necessario o `await` aquie, porque o `.create()` não salva no banco,
-     * apenas cria o objeto a ser salvo.
+     * apenas cria o objeto a ser salvo(cria instância do model/Appointment ,
+     * neste caso).
      * Quem vai salvar de fato é o método abaixo `.save()`
      */
     const appointment = appointmentsRepository.create({
