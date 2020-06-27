@@ -1,4 +1,5 @@
 import { startOfHour } from 'date-fns';
+import { getCustomRepository } from 'typeorm';
 
 import Appointment from '../models/Appointment';
 import AppointmentsRepository from '../repositories/AppointmentsRepository';
@@ -9,16 +10,14 @@ interface CreateAppointmentServiceDTO {
 }
 
 class CreateAppointmentService {
-  private appointmentsRepository: AppointmentsRepository;
-
-  constructor(appointmentReposotory: AppointmentsRepository) {
-    this.appointmentsRepository = appointmentReposotory;
-  }
-
-  public execute({ provider, date }: CreateAppointmentServiceDTO): Appointment {
+  public async execute({
+    provider,
+    date,
+  }: CreateAppointmentServiceDTO): Promise<Appointment> {
+    const appointmentsRepository = getCustomRepository(AppointmentsRepository);
     const parsedDate = startOfHour(date);
 
-    const findAppointmentInSameDate = this.appointmentsRepository.findByDate(
+    const findAppointmentInSameDate = await appointmentsRepository.findByDate(
       parsedDate,
     );
 
@@ -26,12 +25,19 @@ class CreateAppointmentService {
       throw new Error('This appointment already booked');
     }
 
-    const appointmentCreated = this.appointmentsRepository.create(
+    /**
+     * Não é necessario o `await` aquie, porque o `.create()` não salva no banco,
+     * apenas cria o objeto a ser salvo.
+     * Quem vai salvar de fato é o método abaixo `.save()`
+     */
+    const appointment = appointmentsRepository.create({
       provider,
-      parsedDate,
-    );
+      date: parsedDate,
+    });
 
-    return appointmentCreated;
+    await appointmentsRepository.save(appointment);
+
+    return appointment;
   }
 }
 
