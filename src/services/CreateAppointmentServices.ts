@@ -5,13 +5,13 @@ import Appointment from '../models/Appointment';
 import AppointmentsRepository from '../repositories/AppointmentsRepository';
 
 interface CreateAppointmentServiceDTO {
-  provider: string;
+  providerId: string;
   date: Date;
 }
 
 class CreateAppointmentService {
   public async execute({
-    provider,
+    providerId,
     date,
   }: CreateAppointmentServiceDTO): Promise<Appointment> {
     const appointmentsRepository = getCustomRepository(AppointmentsRepository);
@@ -32,7 +32,7 @@ class CreateAppointmentService {
      * Quem vai salvar de fato é o método abaixo `.save()`
      */
     const appointment = appointmentsRepository.create({
-      provider,
+      provider_id: providerId,
       date: parsedDate,
     });
 
