@@ -16,11 +16,7 @@ sessionsRouter.post('/', async (request, response) => {
       password,
     });
 
-    return response.status(201).json({
-      id: sessionInfos.user.id,
-      email: sessionInfos.user.email,
-      name: sessionInfos.user.name,
-    });
+    return response.status(201).json(sessionInfos);
   } catch (error) {
     return response.status(400).json({ message: error.message });
   }

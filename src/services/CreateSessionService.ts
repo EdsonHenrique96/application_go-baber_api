@@ -1,5 +1,6 @@
 import { getRepository } from 'typeorm';
 import { compare } from 'bcryptjs';
+import { sign } from 'jsonwebtoken';
 
 import User from '../models/User';
 
@@ -14,6 +15,7 @@ export interface SessionInfos {
     name: string;
     email: string;
   };
+  token: string;
 }
 
 class CreateSessionService {
@@ -35,12 +37,15 @@ class CreateSessionService {
       throw new Error('Incorrect email or password');
     }
 
+    const token = sign({}, 'pacoca', { expiresIn: '1d', subject: user.id });
+
     return {
       user: {
         id: user.id,
         email: user.email,
         name: user.name,
       },
+      token,
     };
   }
 }
