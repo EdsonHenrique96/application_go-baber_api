@@ -1,6 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
+interface JwtPayload {
+  iat: number;
+  exp: number;
+  sub: string;
+}
+
 const authMiddleware = (
   request: Request,
   _response: Response,
@@ -15,16 +21,22 @@ const authMiddleware = (
   const [tokenType, tokenValue] = authorization.split(' ');
 
   if (!(tokenType === 'Bearer')) {
-    throw new Error('Token must be of type Bearer, malformated token');
+    throw new Error('JWT token must be of type Bearer, malformated token');
   }
 
-  const isValidToken = jwt.verify(tokenValue, 'pacoca');
+  try {
+    const decoded = jwt.verify(tokenValue, 'pacoca');
 
-  if (!isValidToken) {
-    throw new Error('Invalid token');
+    const { sub } = decoded as JwtPayload;
+
+    request.user = {
+      id: sub,
+    };
+
+    return next();
+  } catch (error) {
+    throw new Error('Invalid JWT Token');
   }
-
-  next();
 };
 
 export default authMiddleware;
