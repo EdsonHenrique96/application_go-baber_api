@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
+import { SECRET_KEY } from '../configs/auth';
+
 interface JwtPayload {
   iat: number;
   exp: number;
@@ -25,7 +27,7 @@ const authMiddleware = (
   }
 
   try {
-    const decoded = jwt.verify(tokenValue, 'pacoca');
+    const decoded = jwt.verify(tokenValue, SECRET_KEY);
 
     const { sub } = decoded as JwtPayload;
 

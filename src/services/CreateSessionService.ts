@@ -2,6 +2,7 @@ import { getRepository } from 'typeorm';
 import { compare } from 'bcryptjs';
 import { sign } from 'jsonwebtoken';
 
+import { SECRET_KEY } from '../configs/auth';
 import User from '../models/User';
 
 interface CreateSessionServiceDTO {
@@ -37,7 +38,7 @@ class CreateSessionService {
       throw new Error('Incorrect email or password');
     }
 
-    const token = sign({}, 'pacoca', { expiresIn: '1d', subject: user.id });
+    const token = sign({}, SECRET_KEY, { expiresIn: '1d', subject: user.id });
 
     return {
       user: {
