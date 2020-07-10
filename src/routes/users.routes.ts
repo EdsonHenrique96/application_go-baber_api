@@ -2,8 +2,10 @@ import { Router } from 'express';
 import Multer from 'multer';
 
 import multerConfigs from '../configs/multer';
-import CreateUserService from '../services/CreateUserService';
 import authMiddleware from '../middleware/authMiddleware';
+
+import CreateUserService from '../services/CreateUserService';
+import UpdateUserAvatarService from '../services/UpdateUserAvatarService';
 
 const usersRouter = Router();
 const createUserService = new CreateUserService();
@@ -30,8 +32,21 @@ usersRouter.patch(
   '/avatar',
   authMiddleware,
   multer.single('avatar'),
-  (request, response) => {
-    return response.json(request.file);
+  async (request, response) => {
+    try {
+      const updateUserAvatarService = new UpdateUserAvatarService();
+
+      const user = await updateUserAvatarService.execute({
+        userId: request.user.id,
+        avatarFileName: request.file.filename,
+      });
+
+      delete user.password;
+
+      return response.json(user);
+    } catch (error) {
+      return response.status(400).json({ message: error.message });
+    }
   },
 );
 
