@@ -1,6 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
+import AppError from '../errors/AppError';
+import AppErrorTypes from '../errors/types/AppErrorTypes';
+
 import { SECRET_KEY } from '../configs/auth';
 
 interface JwtPayload {
@@ -17,13 +20,19 @@ const authMiddleware = (
   const { authorization } = request.headers;
 
   if (!authorization) {
-    throw new Error('Authorization header is mandatory.');
+    throw new AppError({
+      message: 'Authorization header is mandatory.',
+      type: AppErrorTypes.UNATHORIZED,
+    });
   }
 
   const [tokenType, tokenValue] = authorization.split(' ');
 
   if (!(tokenType === 'Bearer')) {
-    throw new Error('JWT token must be of type Bearer, malformated token');
+    throw new AppError({
+      message: 'JWT token must be of type Bearer, malformated token',
+      type: AppErrorTypes.UNATHORIZED,
+    });
   }
 
   try {
@@ -37,7 +46,10 @@ const authMiddleware = (
 
     return next();
   } catch (error) {
-    throw new Error('Invalid JWT Token');
+    throw new AppError({
+      message: 'Invalid JWT Token',
+      type: AppErrorTypes.UNATHORIZED,
+    });
   }
 };
 

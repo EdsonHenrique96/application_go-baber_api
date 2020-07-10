@@ -5,6 +5,9 @@ import { sign } from 'jsonwebtoken';
 import { SECRET_KEY } from '../configs/auth';
 import User from '../models/User';
 
+import AppError from '../errors/AppError';
+import AppErrorTypes from '../errors/types/AppErrorTypes';
+
 interface CreateSessionServiceDTO {
   email: string;
   password: string;
@@ -29,13 +32,19 @@ class CreateSessionService {
     const user = await userRepository.findOne({ where: { email } });
 
     if (!user) {
-      throw new Error('Incorrect email or password ');
+      throw new AppError({
+        message: 'Incorrect email or password ',
+        type: AppErrorTypes.INCORRECT_EMAIL_OR_PASSWORD,
+      });
     }
 
     const passwordIsCorrect = await compare(password, user.password);
 
     if (!passwordIsCorrect) {
-      throw new Error('Incorrect email or password');
+      throw new AppError({
+        message: 'Incorrect email or password ',
+        type: AppErrorTypes.INCORRECT_EMAIL_OR_PASSWORD,
+      });
     }
 
     const token = sign({}, SECRET_KEY, { expiresIn: '1d', subject: user.id });

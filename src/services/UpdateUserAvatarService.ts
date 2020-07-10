@@ -4,6 +4,8 @@ import { getRepository } from 'typeorm';
 
 import User from '../models/User';
 import multerConfigs from '../configs/multer';
+import AppError from '../errors/AppError';
+import AppErrorTypes from '../errors/types/AppErrorTypes';
 
 interface UpdateUserAvatarServiceDTO {
   userId: string;
@@ -20,7 +22,10 @@ class UpdateUserAvatarService {
     const user = await userRepository.findOne(userId);
 
     if (!user) {
-      throw new Error('Only authenticated users can updated the avatar');
+      throw new AppError({
+        message: 'Only authenticated users can updated the avatar',
+        type: AppErrorTypes.UNATHORIZED,
+      });
     }
 
     if (user.avatar) {
