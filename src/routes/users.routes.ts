@@ -1,9 +1,14 @@
 import { Router } from 'express';
+import Multer from 'multer';
 
+import multerConfigs from '../configs/multer';
 import CreateUserService from '../services/CreateUserService';
+import authMiddleware from '../middleware/authMiddleware';
 
 const usersRouter = Router();
 const createUserService = new CreateUserService();
+
+const multer = Multer(multerConfigs);
 
 usersRouter.post('/', async (request, response) => {
   try {
@@ -20,5 +25,14 @@ usersRouter.post('/', async (request, response) => {
     return response.status(400).json({ message: error.message });
   }
 });
+
+usersRouter.patch(
+  '/avatar',
+  authMiddleware,
+  multer.single('avatar'),
+  (request, response) => {
+    return response.json(request.file);
+  },
+);
 
 export default usersRouter;
