@@ -11,10 +11,12 @@ import express from 'express';
 import routes from './routes';
 
 import './database';
+import multerConfigs from './configs/multer';
 
 const api = express();
 
 api.use(express.json());
+api.use('/files', express.static(multerConfigs.directory));
 api.use(routes);
 
 api.listen(3333, () => {
