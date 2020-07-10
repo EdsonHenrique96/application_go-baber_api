@@ -13,19 +13,15 @@ const createUserService = new CreateUserService();
 const multer = Multer(multerConfigs);
 
 usersRouter.post('/', async (request, response) => {
-  try {
-    const { name, email, password } = request.body;
+  const { name, email, password } = request.body;
 
-    const userCreated = await createUserService.execute({
-      name,
-      email,
-      password,
-    });
+  const userCreated = await createUserService.execute({
+    name,
+    email,
+    password,
+  });
 
-    return response.status(201).json(userCreated);
-  } catch (error) {
-    return response.status(400).json({ message: error.message });
-  }
+  return response.status(201).json(userCreated);
 });
 
 usersRouter.patch(
@@ -33,20 +29,16 @@ usersRouter.patch(
   authMiddleware,
   multer.single('avatar'),
   async (request, response) => {
-    try {
-      const updateUserAvatarService = new UpdateUserAvatarService();
+    const updateUserAvatarService = new UpdateUserAvatarService();
 
-      const user = await updateUserAvatarService.execute({
-        userId: request.user.id,
-        avatarFileName: request.file.filename,
-      });
+    const user = await updateUserAvatarService.execute({
+      userId: request.user.id,
+      avatarFileName: request.file.filename,
+    });
 
-      delete user.password;
+    delete user.password;
 
-      return response.json(user);
-    } catch (error) {
-      return response.status(400).json({ message: error.message });
-    }
+    return response.json(user);
   },
 );
 
