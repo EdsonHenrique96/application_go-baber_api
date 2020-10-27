@@ -1,1 +1,1 @@
-docker container start gostack-postgres
+docker container start gostack-gobarber
