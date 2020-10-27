@@ -14,6 +14,7 @@ import express, { Request, Response, NextFunction } from 'express';
  * o módulo abaixo axilia nisso.
  */
 import 'express-async-errors';
+import cors from 'cors';
 import routes from './routes';
 
 import './database';
@@ -24,6 +25,7 @@ import HttpErrors from './routes/errors/httpErrors';
 
 const api = express();
 
+api.use(cors());
 api.use(express.json());
 api.use('/files', express.static(multerConfigs.directory));
 api.use(routes);
